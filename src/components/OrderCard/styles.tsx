@@ -8,7 +8,7 @@ export const Board = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    header {
+    > header {
         padding: 8px;
         font-size: 14px;
         display: flex;
