@@ -1,13 +1,21 @@
-import { Actions, ModalOverlay, OrderDetails, Overlay } from "./styles";
 import closeIcon from "../../assets/images/close-icon.svg";
 import { Order } from "../../types/Order";
 import { formatCurrency } from "../../utils/formatCurency";
+import { Actions, ModalOverlay, OrderDetails, Overlay } from "./styles";
 interface IOrderModalProps {
     visible: boolean;
     order: Order | null;
     onClose: () => void;
+    onCancelOrder: () => Promise<void>;
+    isLoading: boolean;
 }
-export function OrderModal({ visible, order, onClose }: IOrderModalProps) {
+export function OrderModal({
+    visible,
+    order,
+    onClose,
+    isLoading,
+    onCancelOrder,
+}: IOrderModalProps) {
     if (!visible || !order) {
         return null;
     }
@@ -70,11 +78,20 @@ export function OrderModal({ visible, order, onClose }: IOrderModalProps) {
                     </div>
                 </OrderDetails>
                 <Actions>
-                    <button type="button" className="primary">
+                    <button
+                        type="button"
+                        className="primary"
+                        disabled={isLoading}
+                    >
                         <span>👨‍🍳</span>
                         <strong>Iniciar produção</strong>
                     </button>
-                    <button type="button" className="secondary">
+                    <button
+                        type="button"
+                        className="secondary"
+                        onClick={onCancelOrder}
+                        disabled={isLoading}
+                    >
                         <strong>Cancelar pedido</strong>
                     </button>
                 </Actions>
