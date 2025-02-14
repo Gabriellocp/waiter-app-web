@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Order } from "../../types/Order";
 import { api } from "../../utils/api";
 import { OrderModal } from "../OrderModal";
@@ -26,6 +27,9 @@ export function OrderCard({ icon, title, orders, onCancel }: IOrderCardProps) {
             await api.delete(`/orders/${selectedOrder!._id}`);
             handleCloseModal();
             onCancel(selectedOrder!._id);
+            toast.success(
+                `O pedido da mesa ${selectedOrder!.table} foi cancelado!`
+            );
         } catch {
         } finally {
             setIsLoading(false);
