@@ -9,6 +9,13 @@ export function Orders() {
     const handleCancelOrder = (id: string) => {
         setOrders((prev) => [...prev].filter((order) => order._id !== id));
     };
+    const handleOrderStatusChange = (id: string, status: Order["status"]) => {
+        setOrders((prev) =>
+            [...prev].map((order) =>
+                order._id === id ? { ...order, status } : order
+            )
+        );
+    };
     useEffect(() => {
         const fetch = async () => {
             try {
@@ -30,18 +37,21 @@ export function Orders() {
                 title="Fila de espera"
                 orders={waiting}
                 onCancel={handleCancelOrder}
+                onStatusChange={handleOrderStatusChange}
             />
             <OrderCard
                 icon="👨‍🍳"
                 title="Preparando..."
                 orders={production}
                 onCancel={handleCancelOrder}
+                onStatusChange={handleOrderStatusChange}
             />
             <OrderCard
                 icon="✅"
                 title="Pronto"
                 orders={done}
                 onCancel={handleCancelOrder}
+                onStatusChange={handleOrderStatusChange}
             />
         </OrdersContainer>
     );

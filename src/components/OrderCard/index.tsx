@@ -9,8 +9,15 @@ interface IOrderCardProps {
     title: string;
     orders: Order[];
     onCancel: (id: string) => void;
+    onStatusChange: (id: string, status: Order["status"]) => void;
 }
-export function OrderCard({ icon, title, orders, onCancel }: IOrderCardProps) {
+export function OrderCard({
+    icon,
+    title,
+    orders,
+    onCancel,
+    onStatusChange,
+}: IOrderCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -35,6 +42,24 @@ export function OrderCard({ icon, title, orders, onCancel }: IOrderCardProps) {
             setIsLoading(false);
         }
     };
+    const handleChangeOrderStatus = async () => {
+        try {
+            setIsLoading(true);
+            const newStatus: Order["status"] =
+                selectedOrder!.status === "WAITING" ? "IN_PRODUCTION" : "DONE";
+            await api.patch(`/orders/${selectedOrder!._id}`, {
+                status: newStatus,
+            });
+            toast.success(
+                `O pedido da mesa ${selectedOrder?.table} foi de ${selectedOrder?.status} para ${newStatus}`
+            );
+            handleCloseModal();
+            onStatusChange(selectedOrder!._id, newStatus);
+        } catch {
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <Board>
             <OrderModal
@@ -43,6 +68,7 @@ export function OrderCard({ icon, title, orders, onCancel }: IOrderCardProps) {
                 onClose={handleCloseModal}
                 isLoading={isLoading}
                 onCancelOrder={handleCancelOrder}
+                onChangeOrderStatus={handleChangeOrderStatus}
             />
             <header>
                 <span>{icon}</span>

@@ -8,6 +8,7 @@ interface IOrderModalProps {
     onClose: () => void;
     onCancelOrder: () => Promise<void>;
     isLoading: boolean;
+    onChangeOrderStatus: () => Promise<void>;
 }
 export function OrderModal({
     visible,
@@ -15,6 +16,7 @@ export function OrderModal({
     onClose,
     isLoading,
     onCancelOrder,
+    onChangeOrderStatus,
 }: IOrderModalProps) {
     if (!visible || !order) {
         return null;
@@ -78,14 +80,33 @@ export function OrderModal({
                     </div>
                 </OrderDetails>
                 <Actions>
-                    <button
-                        type="button"
-                        className="primary"
-                        disabled={isLoading}
-                    >
-                        <span>👨‍🍳</span>
-                        <strong>Iniciar produção</strong>
-                    </button>
+                    {order.status !== "DONE" && (
+                        <button
+                            type="button"
+                            className="primary"
+                            disabled={isLoading}
+                            onClick={onChangeOrderStatus}
+                        >
+                            <span>
+                                {
+                                    {
+                                        WAITING: "👨‍🍳",
+                                        IN_PRODUCTION: "✅",
+                                        DONE: "",
+                                    }[order.status]
+                                }
+                            </span>
+                            <strong>
+                                {
+                                    {
+                                        WAITING: "Iniciar produção",
+                                        IN_PRODUCTION: "Finalizar pedido",
+                                        DONE: "",
+                                    }[order.status]
+                                }
+                            </strong>
+                        </button>
+                    )}
                     <button
                         type="button"
                         className="secondary"
