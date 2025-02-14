@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import socketIo from "socket.io-client";
 import { Order } from "../../types/Order";
 import { api } from "../../utils/api";
 import { OrderCard } from "../OrderCard";
@@ -24,6 +25,17 @@ export function Orders() {
             } catch {}
         };
         fetch();
+    }, []);
+    useEffect(() => {
+        const socket = socketIo("http://localhost:3001", {
+            transports: ["websocket"],
+        });
+        socket.on("orders@new", ({ order }) => {
+            setOrders((prev) => [...prev, order]);
+        });
+        return () => {
+            socket.close();
+        };
     }, []);
     const waiting = orders.filter((order) => order.status === "WAITING");
     const production = orders.filter(
